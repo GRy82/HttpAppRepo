@@ -40,7 +40,13 @@ class App extends Component {
       //throw new Error("Sorry, something went wrong.");
     }
     catch(ex){
-      alert(ex.message);
+      if(ex.response && ex.response.status === 404)
+        alert("This post no longer exists.");
+      else{
+        console.log("logging unexpected error", ex);
+        alert("An unexpected error has occurred.");
+      }
+
       this.setState({ posts: originalPosts });
     }
   };
