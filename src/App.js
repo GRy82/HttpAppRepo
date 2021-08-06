@@ -4,10 +4,22 @@ import axios from 'axios';
 
 const apiEndpoint = 'http://jsonplaceholder.typicode.com/posts';
 
+//parameters are a success callback, and an error callback.
+axios.interceptors.response.use(null, error => {
+  const expectedError = error.response && error.response.status >= 400 && error.response.status < 500;
+  if(!expectedError){
+    console.log("logging unexpected error", error);
+    alert("An unexpected error has occurred.");
+  }
+
+  return Promise.reject(error);
+});
+
 class App extends Component {
   state = {
     posts: []
   };
+
 
   async componentDidMount() {
     const { data: posts } = await axios.get(apiEndpoint);
@@ -42,10 +54,6 @@ class App extends Component {
     catch(ex){
       if(ex.response && ex.response.status === 404)
         alert("This post no longer exists.");
-      else{
-        console.log("logging unexpected error", ex);
-        alert("An unexpected error has occurred.");
-      }
 
       this.setState({ posts: originalPosts });
     }
